@@ -1,0 +1,17 @@
+You are given a customer id and a call transcript which contains a conversation between a customer and a customer service agent.
+Go through the entire conversation and perform the below:
+
+1. extract the correct customer ID.  
+2. determine if the customer's card is blocked. There could be other issues that the customer may be facing, your purpose is to identify card blocked scenarios only.
+
+The inputs are::
+
+transcript: {{$transcript}}
+
+The output should have the below format if card blocked detected:
+
+Card blocked for customer : Customer ID
+
+The output should have the below format if no card blocked detected:
+
+Card not blocked for customer : Customer ID

@@ -19,21 +19,27 @@ kernel.add_service(
 
 plugin = kernel.add_plugin(parent_directory="src/plugins/prompt_templates", plugin_name="func")
 
-demo_function = plugin["blocked_card"]
+demo_function = plugin["blocked_reason"]
 
 transcript = """
             Customer ID : 123456
-            
+            Date: 16-03-2025 10:23:30
+
+            Call Transcript:
+                        
             Agent: how can I help you today? 
             Customer: My card is blocked, could you please help me with that?
             Agent: I am sorry to hear that. Can you please provide me with your name, contact number, email id and address to unblock the card?
             Customer: My name is Vikas, contact number is 1234567890, email id is vsdsdf@gmail.com and address is 1234, 5th Avenue, New York, NY 10001
             Agent: Thank you for providing the details. I have raised a request for this to be looked at immediately. You will receive a confirmation email shortly. Is there anything else I can help you with?
-            """
+            """ 
             
 transcript1 = """
-            Customer ID : 123456
-            
+            Customer ID : 136743
+            Date: 16-03-2025 10:29:30
+
+            Call Transcript:            
+                        
             Agent: how can I help you today? 
             Customer: My account is blocked, could you please help me with that?
             Agent: I am sorry to hear that. Can you please provide me with your name, contact number, email id and address to unblock the account?
@@ -42,6 +48,6 @@ transcript1 = """
             """
             
 async def run_demo():
-    return await kernel.invoke(demo_function, KernelArguments(customer="123456", transcript=transcript))
+    return await kernel.invoke(demo_function, KernelArguments(transcript=transcript))
 
 print(asyncio.run(run_demo()))

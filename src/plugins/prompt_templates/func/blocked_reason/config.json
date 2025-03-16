@@ -1,0 +1,17 @@
+{
+    "schema": 1,
+    "description": "To read a given transcript file, extract customer ID and find if the conversation is about a blocked card or not",
+    "execution_settings": {
+        "default": {
+            "max_tokens":1000,
+            "temperature":0.7
+        }
+    },
+    "input_variables": [
+        {
+            "name": "transcript",
+            "description": "Transcript of the conversation",
+            "default": ""
+        }
+    ]
+}
