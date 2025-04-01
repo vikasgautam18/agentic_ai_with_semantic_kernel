@@ -35,7 +35,7 @@ CREATE TABLE CustomerData (
 -- Insert data into CustomerData table
 INSERT INTO CustomerData (customer_id, card_blocked, payment_due, card_type)
 VALUES (123456, TRUE, TRUE, 'Visa'),
-       (136743, FALSE, FALSE, 'MasterCard'),
+       (136743, TRUE, FALSE, 'MasterCard'),
        (3, FALSE, FALSE, 'American Express'),
        (4, TRUE, FALSE, 'Discover');
 
