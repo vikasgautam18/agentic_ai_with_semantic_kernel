@@ -133,7 +133,9 @@ async def main():
         TRANSCRIPTION_REVIEWER = "CreditCardAgent"
         TRANSCRIPTION_REVIEWER_INSTRUCTIONS = """
         You are a credit card agent who has been tasked with greeting the customer and resolving issues related to credit card forgotten pin.
-        Check with the customer what is the issue with the credit card.If the customer has forgotten the pin proceed ahead.Else exit the chat.
+        Greet the customer and ask them what is the issue with the credit card.
+        If the customer has forgotten the pin, proceed ahead. Else exit the chat.
+        Ask the user exactly once  for customer id , account id , email , phone number and otp.
         Get the customer id.
         Get account id .
         Get email.
@@ -156,16 +158,16 @@ async def main():
         If it is a valid customer proceed ahead, otherwise exit the chat.
         Verify the account id, email id,phone from the accounts table of customer.
         Verify that the otp is equal to 1001.Do not check otp with the database.
-        If all above conditions are satisfied ,confirm to the Orchestrator that the reset process is complete.
+        If all above conditions are satisfied ,inform the Orchestrator to draft a note for resetting the pin.
 
         """
 
         ORCHESTRATOR_NAME = "Orchestrator"
         ORCHESTRATOR_INSTRUCTIONS = """
         You are an orchestrator who has been tasked with coordinating the work of the credit card agent and the business analyst.
-        You will receive the customer id ,account id ,email ,phone and otp from the credit card agent and pass it to the business analyst and ask it to verify the details and reset the pin if required conditiona are met.
-        If the business analyst provides a response saying the reset process is complete you will draft an email to the customer with a test link to reset the password.
-        Following is the email template:
+        You will receive the customer id ,account id ,email ,phone and otp from the credit card agent and pass it to the business analyst and ask it to verify the details.
+        If the business analyst provides a response saying the draft a note you will draft an note to the customer with a test link to reset the password.
+        Following is the note template:
         Hello <customer_name>,
         Your request to reset your credit card pin has been approved. Please click on the link below to reset your pin.
         <test_link>
@@ -196,7 +198,7 @@ async def main():
         instructions=ORCHESTRATOR_INSTRUCTIONS,
         )
 
-        TERMINATION_KEYWORD = "approved"
+        TERMINATION_KEYWORD = "Approved"
         selection_function = KernelFunctionFromPrompt(
         function_name="selection",
         prompt=f"""
@@ -210,12 +212,14 @@ async def main():
         - {ORCHESTRATOR_NAME}
 
         Always follow these rules when selecting the next participant:
+        - {TRANSCRIPTION_REVIEWER} will greet the user and enquire about the issue faced by the customer.
         - After user input, it is {TRANSCRIPTION_REVIEWER}'s turn.
+        - Only {TRANSCRIPTION_REVIEWER} can ask for customer details.
         - {TRANSCRIPTION_REVIEWER} will get the customer details from the user and pass it to {ORCHESTRATOR_NAME}.
-        - It will be {ORCHESTRATOR_NAME}'s turn only once customer id is provided.
+        - It will be {ORCHESTRATOR_NAME}'s turn only once customer details are provided.
         - After {ORCHESTRATOR_NAME} provides details, it is {ANALYST_NAME}'s turn.
-        - If  {ANALYST_NAME} responds as 'COMPLETE', it is {ORCHESTRATOR_NAME}'s turn.
-        - If  {ORCHESTRATOR_NAME} responds as {TERMINATION_KEYWORD}, then terminate.
+        - If  {ANALYST_NAME} responds , it is {ORCHESTRATOR_NAME}'s turn.
+        - Terminate only when  {ORCHESTRATOR_NAME} responds as {TERMINATION_KEYWORD}
 
         History:
         {{{{$history}}}}
@@ -247,17 +251,9 @@ async def main():
             agent_orchestrator 
         
                ],
-        selection_strategy=KernelFunctionSelectionStrategy(
-            function=selection_function,
-            kernel=_create_kernel_with_chat_completion("selection"),
-            result_parser=lambda result: str(result.value[0]) if result.value is not None else ANALYST_NAME,
-            agent_variable_name="agents",
-            history_variable_name="history",
-            history_reducer=history_reducer,
-            ),
         termination_strategy=ApprovalTerminationStrategy(
-        agents=[agent_orchestrator],
-        maximum_iterations=3,
+        agents=[agent_orchestrator,agent_analyst,agent_creditcard],
+        maximum_iterations=1,
             ),
         )  
 
@@ -277,18 +273,6 @@ async def main():
                 await group_chat.reset()
                 print("[Conversation has been reset]")
                 continue
-
-            if user_input.startswith("@") and len(input) > 1:
-                file_path = input[1:]
-                try:
-                    if not os.path.exists(file_path):
-                        print(f"Unable to access file: {file_path}")
-                        continue
-                    with open(file_path) as file:
-                        user_input = file.read()
-                except Exception:
-                    print(f"Unable to access file: {file_path}")
-                    continue
 
             await group_chat.add_chat_message(ChatMessageContent(role=AuthorRole.USER, content=user_input))
 
