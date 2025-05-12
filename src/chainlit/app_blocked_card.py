@@ -260,7 +260,7 @@ async def on_chat_start():
                 "I will be your assistant today. Please provide customer ID to continue.", author=ORCHESTRATOR_NAME
     ).send()
 
-    cl.user_session.set("current_agent", agent_orchestrator)
+    #cl.user_session.set("current_agent", agent_orchestrator)
     cl.user_session.set("chat_history", chat_history)
     cl.user_session.set("group_chat", group_chat)
 
@@ -273,11 +273,11 @@ async def on_message(message: cl.Message):
     # add message to chat history
     chat_history.add_user_message(message.content)
     # Create a Chainlit message for the response stream
-    answer = cl.Message(content="")
+    #answer = cl.Message(content="")
     async for msg in group_chat.invoke():
         
-        if str(msg.content):
-            await answer.stream_token(msg.content)
+        #if str(msg.content):
+            #await answer.stream_token(msg.content)
         
         print(f"# {msg.name}: {msg.content}", end="")
         await cl.Message(
@@ -285,3 +285,4 @@ async def on_message(message: cl.Message):
         ).send()
 
         chat_history.add_assistant_message(msg.content)
+
