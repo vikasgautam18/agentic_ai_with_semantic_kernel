@@ -192,8 +192,9 @@ selection_function = KernelFunctionFromPrompt(
 termination_function = KernelFunctionFromPrompt(
     function_name="termination",
     prompt="""
-    Determine if the analysis has been approved by the Triage Agent.  
-    If so, respond with a single word: yes
+    Determine if the analysis has been approved by the Triage Agent.
+    Analysis is approved if the Triage Agent has provided a response stating that the analysis is approved.
+    Only if approved, respond with a single word: yes
 
     History:
     {{$history}}
