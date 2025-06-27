@@ -156,7 +156,8 @@ ORCHESTRATOR_INSTRUCTIONS = """
 "Always ask the customer for the customer ID to identify the customer and provide this ID to the Business Analyst."
 You can ask the business analyst agent to determine the reason for the blocked card by executing the necessary SQL queries.
 If the reviwer provides a response stating that the card is not blocked, you will conclude that the transcript is being skipped as it is not related to Card Blocking.
-After the analysis is provided by Business Analyst, you will draft an email to the customer with the analysis provided by the business analyst.
+After the analysis is provided by Business Analyst, you will draft an email to the customer with the analysis provided by the business analyst. 
+If the reason for card blocking is unknown, explain in the email that you will get back to them with the reason as soon as possible.
 After you have drafted the email, you MUST approve the analysis by using keywords such as "approved" or "not approved". 
 """
 
@@ -257,8 +258,8 @@ async def on_chat_start():
     )
 
     await cl.Message(
-        content="Welcome to the Card Blocking Triage Agent. "
-                "I will be your assistant today. Please provide customer ID to continue.", author=ORCHESTRATOR_NAME
+        content="Welcome to the Banking Assistant. I am here to help you with your banking needs. "
+                "I will help you with the blocked card request. Please provide customer ID to continue.", author=ORCHESTRATOR_NAME
     ).send()
 
     #cl.user_session.set("current_agent", agent_orchestrator)
