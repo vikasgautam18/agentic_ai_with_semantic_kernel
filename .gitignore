@@ -10,6 +10,7 @@ __pycache__/
 .chainlit
 .env.bak
 
+testenv/
 # Distribution / packaging
 .Python
 build/
