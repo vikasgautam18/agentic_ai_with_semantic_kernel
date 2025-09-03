@@ -33,8 +33,9 @@ class WeatherPlugin:
 
 @cl.on_chat_start
 async def on_chat_start():
-    service_id = "agent" 
-    # Setup Semantic Kernel
+    service_id = "agent"
+    
+    # Setup the brain (Core)
     kernel = sk.Kernel()
 
     # Add AI Chat Completion service
@@ -50,7 +51,7 @@ async def on_chat_start():
     settings = kernel.get_prompt_execution_settings_from_service_id(service_id=service_id)
     settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
 
-
+    # provide the agent a purpose, persona and situational awareness
     agent = ChatCompletionAgent(
         kernel=kernel,
         name="Host",

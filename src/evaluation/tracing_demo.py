@@ -47,6 +47,9 @@ env_path = f"{current_dir}/.env"
 print(f"Loading environment variables from: {env_path}")
 load_dotenv(dotenv_path=env_path)
 
+# The below OS Environment variable must be set to True for the tracing to work
+# AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED
+
 # Create the AI Project client with DefaultAzureCredential
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
